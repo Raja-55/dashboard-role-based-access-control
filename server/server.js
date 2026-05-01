@@ -65,6 +65,10 @@ app.use(
   }),
 );
 
+app.get("/", (req, res) => {
+  res.send("Backend Working Successfully 🚀");
+});
+
 app.get("/health", (req, res) => res.json({ ok: true }));
 
 app.use("/api/auth", authRoutes);
