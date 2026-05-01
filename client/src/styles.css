@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Premium-ish background */
+body {
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter,
+    "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+.bg-grid {
+  background-image: radial-gradient(
+      rgba(124, 58, 237, 0.25) 1px,
+      transparent 1px
+    ),
+    radial-gradient(rgba(6, 182, 212, 0.18) 1px, transparent 1px);
+  background-position: 0 0, 22px 22px;
+  background-size: 44px 44px;
+}
+
+.glass {
+  background: rgba(30, 41, 59, 0.55);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  backdrop-filter: blur(14px);
+}
+
