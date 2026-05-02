@@ -18,6 +18,29 @@ validateEnv();
 
 const app = express();
 
+function parseAllowedOrigins() {
+  const fromList = (process.env.CLIENT_ORIGINS || "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const single = (process.env.CLIENT_ORIGIN || "").trim();
+  const origins = [...fromList, ...(single ? [single] : [])];
+  return new Set(origins);
+}
+
+function isAllowedVercelOrigin(origin) {
+  // Allow Vercel preview domains when explicitly opted-in.
+  // Set ALLOW_VERCEL_PREVIEWS=true on the API host if you want this behavior.
+  if (!process.env.ALLOW_VERCEL_PREVIEWS) return false;
+  try {
+    const { hostname, protocol } = new URL(origin);
+    if (protocol !== "https:") return false;
+    return hostname.endsWith(".vercel.app");
+  } catch {
+    return false;
+  }
+}
+
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -39,15 +62,21 @@ app.use(
   }),
 );
 
-const clientOrigin = process.env.CLIENT_ORIGIN || "http://localhost:5173";
-app.options('*', cors());
-app.use(
-  cors({
-    origin: clientOrigin,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true,
-  }),
-);
+const allowedOrigins = parseAllowedOrigins();
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow non-browser callers (no Origin header), like curl/postman/health checks.
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.has(origin)) return callback(null, true);
+    if (isAllowedVercelOrigin(origin)) return callback(null, true);
+    return callback(new Error(`CORS blocked origin: ${origin}`));
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true,
+};
+
+app.options("*", cors(corsOptions));
+app.use(cors(corsOptions));
 
 app.set("trust proxy", 1);
 app.use(

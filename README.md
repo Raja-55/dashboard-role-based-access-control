@@ -24,7 +24,9 @@ PORT=5000
 MONGO_URI=YOUR_MONGODB_ATLAS_URI
 JWT_SECRET=YOUR_LONG_RANDOM_SECRET
 NODE_ENV=development
-CLIENT_ORIGIN=http://localhost:5173
+CLIENT_ORIGINS=http://localhost:5173
+# Optional: allow *.vercel.app preview URLs (recommended for Vercel previews)
+# ALLOW_VERCEL_PREVIEWS=true
 ```
 
 ### 2) Frontend env
@@ -45,6 +47,11 @@ npm run dev
 Frontend: `http://localhost:5173`  
 Backend: `http://localhost:5000`
 
+## Deployment notes (Vercel + Railway)
+
+- **Vercel (frontend):** set `VITE_API_URL` to your API origin (example: `https://rbac-server-production.up.railway.app`) for **Production + Preview + Development** environments, then redeploy.
+- **Railway (backend):** set `CLIENT_ORIGINS` to a comma-separated allowlist of frontend origins (example: `https://dashboard-role-based-access-control.vercel.app`). If you want preview deployments to work too, set `ALLOW_VERCEL_PREVIEWS=true`.
+
 ## API overview
 
 - Auth
@@ -63,4 +70,3 @@ Backend: `http://localhost:5000`
   - `POST /api/tasks` (Admin)
   - `PUT /api/tasks/:id` (Admin, or Member for status only)
   - `DELETE /api/tasks/:id` (Admin)
-
