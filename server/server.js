@@ -40,9 +40,11 @@ app.use(
 );
 
 const clientOrigin = process.env.CLIENT_ORIGIN || "http://localhost:5173";
+app.options('*', cors());
 app.use(
   cors({
     origin: clientOrigin,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   }),
 );
